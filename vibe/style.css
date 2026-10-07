@@ -1,0 +1,618 @@
+/* ==========================================================================
+   阿斗保卫战 —— 样式
+   参考截图：粉紫灰调、圆角卡通、纸片质感
+   ========================================================================== */
+
+:root{
+  --bg-deep:#4a2f3c;
+  --bg-pink:#caa6ad;
+  --land:#b58a94;
+  --land-dark:#9a6f7a;
+  --road:#efe3dd;
+  --slot:#fdf5ea;
+  --ink:#241d22;
+  --gold:#c8891a;
+  --purple:#7b4bd6;
+  --panel:rgba(255,250,246,.92);
+  --line:#5b3b47;
+  --brown1:#a9784f;
+  --brown2:#7d5334;
+  --red:#e2564f;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+html,body{
+  margin:0;padding:0;height:100%;
+  background:#2b1a22;
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Heiti SC",sans-serif;
+  color:var(--ink);
+  overflow:hidden;                       /* 整个页面不滚动：手机上手势只用于游戏 */
+  overscroll-behavior:none;              /* 关掉下拉刷新 / 橡皮筋 */
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;            /* 长按不弹「拷贝/查询」菜单 */
+  touch-action:manipulation;             /* 去掉双击缩放的 300ms 延迟 */
+}
+
+#app{
+  position:relative;
+  width:100%;
+  max-width:480px;
+  height:100%;
+  max-height:100vh;
+  max-height:100dvh;                     /* 手机地址栏收起/展开时高度自适应 */
+  margin:0 auto;
+  background:var(--bg-pink);
+  box-shadow:0 0 40px rgba(0,0,0,.6);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  /* 刘海屏 / 手势条安全区 */
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.hidden{display:none !important;}
+
+.screen{position:relative;width:100%;flex:1 1 auto;min-height:0;}
+
+/* ======================= 通用组件 ======================= */
+.btn{
+  display:block;width:100%;
+  padding:13px 16px;
+  border:2px solid var(--line);
+  border-radius:14px;
+  background:linear-gradient(#f6e7d8,#e2cbb6);
+  color:#3a2a30;
+  font-size:17px;font-weight:700;letter-spacing:2px;
+  font-family:inherit;
+  cursor:pointer;
+  box-shadow:0 4px 0 #7b5a54, 0 6px 10px rgba(0,0,0,.25);
+  transition:transform .06s,box-shadow .06s,filter .12s;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7b5a54;}
+.btn-primary{
+  background:linear-gradient(#f2b661,#d3832c);
+  color:#4a2a06;
+  border-color:#5a3413;
+  box-shadow:0 4px 0 #8a4d12, 0 6px 12px rgba(0,0,0,.3);
+}
+.btn-primary:active{box-shadow:0 1px 0 #8a4d12;}
+.btn-ghost{
+  background:linear-gradient(rgba(255,250,246,.7),rgba(240,225,215,.7));
+  font-size:15px;letter-spacing:1px;
+}
+
+/* ======================= 主界面（水墨风） ======================= */
+#menu{position:relative;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#cbc2b1;}
+#menuBg{position:absolute;left:0;top:0;width:100%;height:100%;min-height:620px;display:block;}
+
+/* 主界面用 grid 布局：左列（头像/设置/金币/体力/公告/回顾/加到桌面）| 标题区
+   底行：排行榜 | 开始游戏 | 武器背包。左列内部用 flex 列，保证左边缘对齐 + 垂直等距 */
+.menu-ui{
+  position:relative;
+  min-height:620px;height:100%;
+  padding:12px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:10px;
+}
+.mu-left{
+  grid-column:1;grid-row:1;
+  display:flex;flex-direction:column;align-items:flex-start;
+  gap:10px;
+}
+.mu-left > *{flex:0 0 auto;}
+.mu-head{grid-column:2;grid-row:1;align-self:start;text-align:center;pointer-events:none;min-width:0;}
+.mu-bottom{grid-column:1 / -1;grid-row:3;text-align:center;padding-bottom:46px;}
+.mu-side.rank-side{grid-column:1;grid-row:3;align-self:end;justify-self:start;}
+.mu-backpack{grid-column:2;grid-row:3;align-self:end;justify-self:end;}
+
+/* --- 左上角头像 + 设置 --- */
+.mu-avatar{
+  width:48px;height:48px;padding:0;
+  border-radius:10px;border:2px solid #4a3a2e;overflow:hidden;cursor:pointer;
+  background:linear-gradient(#f6dde6,#d8aec4);
+  box-shadow:0 3px 0 rgba(60,40,30,.5), inset 0 0 0 2px rgba(255,255,255,.5);
+}
+.mu-avatar.right{left:auto;right:12px;background:linear-gradient(#dfe6f6,#b6c4e0);}
+.mu-avatar:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(60,40,30,.5);}
+.mu-avatar .face{position:relative;display:block;width:100%;height:100%;}
+.mu-avatar .face:before{content:"";position:absolute;left:0;top:0;right:0;height:34%;background:#3b2a36;border-radius:10px 10px 45% 45%;}
+.mu-avatar .face:after{content:"";position:absolute;left:34%;top:62%;width:32%;height:9px;border-bottom:2px solid #4a3a2e;border-radius:0 0 12px 12px;}
+.mu-avatar .face i{position:absolute;top:44%;width:6px;height:7px;border-radius:50%;background:#4a3a2e;}
+.mu-avatar .face i:first-child{left:26%;}
+.mu-avatar .face i:last-child{right:26%;}
+
+.mu-gear{
+  width:34px;height:34px;padding:0;border:none;
+  background:transparent;cursor:pointer;
+}
+.mu-gear:active{transform:scale(.92);}
+.mu-gear .gear{position:relative;display:block;width:34px;height:34px;}
+.mu-gear .gear i{
+  position:absolute;left:50%;top:50%;width:8px;height:32px;margin:-16px 0 0 -4px;
+  background:#7b8087;border-radius:3px;
+}
+.mu-gear .gear i:nth-child(2){transform:rotate(45deg);}
+.mu-gear .gear i:nth-child(3){transform:rotate(90deg);}
+.mu-gear .gear i:nth-child(4){transform:rotate(135deg);}
+.mu-gear .gear:after{
+  content:"";position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;
+  border-radius:50%;background:#9aa0a7;border:3px solid #7b8087;
+}
+.mu-gear .gear:before{
+  content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;
+  border-radius:50%;background:#565b61;z-index:2;
+}
+
+/* --- 顶部金币 / 体力 --- */
+.mu-coins{
+  height:36px;min-width:118px;font-family:inherit;
+  display:flex;align-items:center;gap:8px;padding:0 18px 0 6px;
+  border-radius:19px;background:linear-gradient(rgba(72,48,32,.92),rgba(46,30,20,.92));
+  border:2px solid #2b1a10;
+  box-shadow:0 3px 0 rgba(30,18,10,.6), inset 0 1px 0 rgba(255,220,170,.25);
+  cursor:pointer;
+}
+.mu-coins b{color:#f4d99a;font-size:18px;letter-spacing:1px;}
+.coin{
+  width:26px;height:26px;border-radius:50%;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;
+  font-style:normal;font-size:14px;font-weight:700;color:#6b4408;
+  background:radial-gradient(circle at 35% 30%,#ffedad,#d9a12e);
+  border:2px solid #7a5512;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);
+}
+.mu-stamina{
+  height:32px;
+  display:flex;align-items:center;gap:6px;padding:0 6px 0 12px;
+  border-radius:16px;background:linear-gradient(rgba(72,48,32,.9),rgba(46,30,20,.9));
+  border:2px solid #2b1a10;font-family:inherit;cursor:pointer;
+  box-shadow:0 3px 0 rgba(30,18,10,.6);
+}
+.mu-stamina b{color:#ffe9b0;font-size:15px;letter-spacing:1px;}
+.mu-stamina:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(30,18,10,.6);}
+.bolt{
+  width:15px;height:24px;flex:0 0 auto;display:inline-block;
+  background:linear-gradient(#ffe45c,#efa41a);
+  clip-path:polygon(58% 0,18% 54%,45% 54%,32% 100%,82% 42%,52% 42%);
+  filter:drop-shadow(0 1px 0 #7c4f08);
+}
+.bolt.small{width:13px;height:21px;}
+.plus{
+  width:22px;height:22px;border-radius:50%;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(#7ed36a,#3f9b34);border:2px solid #2c6b24;
+  color:#fff;font-size:15px;font-weight:700;line-height:1;
+}
+.plus.small{width:16px;height:16px;font-size:12px;margin-right:4px;border-width:1.5px;}
+
+/* --- 左侧栏纸牌按钮（左列内，统一高度与左边缘） --- */
+.mu-side{
+  display:flex;align-items:center;justify-content:center;gap:3px;
+  height:34px;padding:0 12px;min-width:74px;
+  border:2px solid #6b4a2a;border-radius:5px;
+  background:linear-gradient(#faf1dc,#e6d3ad);
+  color:#4a2f18;font-family:inherit;font-size:15px;font-weight:700;letter-spacing:2px;
+  box-shadow:0 3px 0 rgba(70,45,25,.55), inset 0 0 0 2px rgba(255,255,255,.55);
+  cursor:pointer;
+}
+.mu-side:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(70,45,25,.55);}
+.mu-side.small{font-size:13px;letter-spacing:1px;min-width:66px;}
+.mu-side.rank-side{height:auto;flex-direction:column;font-size:12px;gap:2px;padding:5px 8px;min-width:62px;}
+.podium{display:flex;align-items:flex-end;gap:2px;height:20px;}
+.podium i{
+  width:13px;font-style:normal;font-size:9px;font-weight:700;color:#4a2f18;
+  background:linear-gradient(#f0cd76,#cf9a2c);border:1px solid #6b4a2a;
+  display:flex;align-items:flex-start;justify-content:center;
+}
+.podium i:nth-child(1){height:20px;}
+.podium i:nth-child(2){height:15px;}
+.podium i:nth-child(3){height:11px;}
+
+/* --- 标题 / 段位 / 星星 --- */
+.mu-head{}
+.mu-title{
+  margin:0;font-family:"STKaiti","KaiTi","Kaiti SC","楷体","STSong","SimSun",serif;
+  font-size:36px;font-weight:700;letter-spacing:5px;
+  color:#a8372b;
+  text-shadow:2px 0 0 #241a14, -2px 0 0 #241a14, 0 2px 0 #241a14, 0 -2px 0 #241a14,
+              0 4px 8px rgba(40,25,15,.45);
+}
+.mu-rank{
+  margin-top:6px;font-family:"STKaiti","KaiTi","楷体",serif;
+  font-size:24px;font-weight:700;letter-spacing:4px;color:#2b2119;
+  text-shadow:0 1px 0 rgba(255,250,235,.8);
+}
+.mu-stars{
+  margin-top:2px;font-size:26px;font-weight:700;color:#e8b52c;letter-spacing:2px;
+  text-shadow:0 2px 0 #8a6410, 0 0 10px rgba(255,220,120,.8);
+}
+
+/* --- 底部：开始游戏 --- */
+.mu-bottom{}
+.swords{position:relative;width:64px;height:44px;margin:0 auto 2px;}
+.swords i{
+  position:absolute;left:50%;top:50%;width:11px;height:46px;margin:-23px 0 0 -5.5px;
+  background:linear-gradient(90deg,#eef4f8,#93a4b1 45%,#f4f8fb);
+  clip-path:polygon(50% 0,100% 18%,100% 100%,0 100%,0 18%);
+  box-shadow:0 0 0 1px rgba(60,80,95,.7);
+}
+.swords i:first-child{transform:rotate(38deg);}
+.swords i:last-child{transform:rotate(-38deg);}
+.swords:after{
+  content:"";position:absolute;left:50%;top:52%;width:26px;height:7px;margin:-3.5px 0 0 -13px;
+  border-radius:4px;background:linear-gradient(#e0bb6a,#a87f26);border:1px solid #6b4a12;
+}
+.mu-start{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:76%;max-width:330px;margin:0 auto;padding:15px 12px;
+  border:3px solid #6d2a20;border-radius:10px;
+  background:linear-gradient(#bb5a44,#8d3125);
+  color:#fdf3e3;font-family:inherit;font-size:26px;font-weight:700;letter-spacing:7px;
+  text-shadow:0 2px 0 rgba(60,20,15,.55);
+  box-shadow:0 5px 0 #5a2118, 0 9px 18px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,214,170,.3);
+  cursor:pointer;
+}
+.mu-start:active{transform:translateY(4px);box-shadow:0 1px 0 #5a2118;}
+.mu-extra{display:flex;justify-content:center;gap:10px;margin-top:14px;}
+.mu-sub{
+  padding:8px 14px;border:2px solid #6d2a20;border-radius:8px;
+  background:linear-gradient(#a9503c,#7d2c21);
+  color:#f6e6d4;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:2px;
+  box-shadow:0 3px 0 #5a2118;cursor:pointer;
+}
+.mu-sub:active{transform:translateY(2px);box-shadow:0 1px 0 #5a2118;}
+
+/* --- 右下武器背包 --- */
+.mu-backpack{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 10px;border:2px solid #6b4a2a;border-radius:8px;
+  background:linear-gradient(rgba(250,241,220,.92),rgba(230,211,173,.92));
+  color:#4a2f18;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:1px;
+  box-shadow:0 3px 0 rgba(70,45,25,.55);cursor:pointer;
+}
+.mu-backpack:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(70,45,25,.55);}
+.bag{
+  position:relative;width:32px;height:26px;border-radius:8px 8px 10px 10px;
+  background:linear-gradient(#e09a48,#a85f1e);border:2px solid #5b3312;
+}
+.bag:before{
+  content:"";position:absolute;left:50%;top:-9px;width:16px;height:11px;margin-left:-8px;
+  border:2px solid #5b3312;border-bottom:none;border-radius:8px 8px 0 0;
+}
+.bag:after{
+  content:"";position:absolute;left:50%;top:36%;width:12px;height:8px;margin-left:-6px;
+  border-radius:3px;background:#f2c65f;border:1px solid #5b3312;
+}
+
+/* 详细界面里的表格与说明 */
+.dlg-note{font-size:12px;color:#5d3b45;line-height:1.6;margin:0 0 10px;}
+.dlg-note b{color:#8a4a58;}
+.dlg-h3{font-size:13px;margin:14px 0 6px;color:#6b3d4c;letter-spacing:1px;}
+.info-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:8px;}
+.info-table th,.info-table td{border:1px solid #c9aeb6;padding:4px 5px;text-align:left;vertical-align:top;}
+.info-table th{background:#eddbe0;color:#6b3d4c;font-weight:700;}
+.info-table td.hl{font-weight:700;color:#8a4a58;white-space:nowrap;}
+.info-table td.small{font-size:10.5px;color:#6b4a56;}
+
+.rank-row{display:flex;align-items:center;gap:12px;}
+.rank-badge{
+  flex:0 0 auto;
+  width:62px;height:62px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:19px;font-weight:700;color:#5a3a1a;letter-spacing:1px;
+  background:radial-gradient(circle at 35% 30%,#f0d3a8,#c99a5e);
+  border:3px solid #7c5327;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.35);
+}
+.rank-info{flex:1;min-width:0;}
+.rank-name{font-size:14px;font-weight:700;color:#4a2f3c;}
+.rank-bar{height:9px;border-radius:6px;background:#d9c3c9;margin:6px 0 5px;overflow:hidden;border:1px solid #a3858e;}
+.rank-bar i{display:block;height:100%;background:linear-gradient(#f6c15c,#dd8b2a);}
+.rank-note{font-size:11px;color:#9c7d86;}
+
+/* 弹窗里的开关（设置界面） */
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 2px;border-bottom:1px dashed #cbb3ba;}
+.switch-row:last-of-type{border-bottom:none;}
+.switch-row span{font-size:13px;color:#4a2f3c;font-weight:700;}
+.sw{
+  width:52px;height:26px;border-radius:14px;border:2px solid #8a6a74;background:#dcc9cf;
+  position:relative;cursor:pointer;flex:0 0 auto;padding:0;transition:background .15s;
+}
+.sw:after{
+  content:"";position:absolute;left:2px;top:1px;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:left .15s;
+}
+.sw.on{background:linear-gradient(#7ed36a,#3f9b34);border-color:#2c6b24;}
+.sw.on:after{left:26px;}
+
+/* ======================= 战斗界面 ======================= */
+#game{
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  background:linear-gradient(#e0bfc4,#c9a3ab 40%,#bf98a2);
+}
+
+/* --- 顶栏 --- */
+#topbar{
+  display:flex;align-items:center;gap:8px;flex:0 0 auto;
+  padding:8px 10px;
+  background:linear-gradient(#c79aa4,#b3858f);
+  border-bottom:3px solid #5b3b47;
+}
+.icon-btn{
+  width:38px;height:38px;flex:0 0 auto;
+  border-radius:12px;border:2px solid #5b3b47;
+  background:linear-gradient(#f6ecec,#dcc7cc);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;padding:0;
+}
+.pause-bars{display:flex;gap:5px;}
+.pause-bars i{display:block;width:5px;height:16px;background:#5b3b47;border-radius:2px;}
+
+.bun-box{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 10px 4px 4px;border-radius:20px;
+  background:rgba(60,35,45,.55);
+  border:2px solid #4a2f3c;
+  color:#fff;font-size:16px;font-weight:700;min-width:72px;
+}
+.bun{
+  width:20px;height:16px;border-radius:50% 50% 45% 45%;
+  background:radial-gradient(circle at 35% 30%,#fffdf7,#e8dcc6);
+  border:2px solid #6b4a2f;display:inline-block;flex:0 0 auto;
+}
+.bun.small{width:15px;height:12px;border-width:1.5px;}
+
+.wave-box{flex:1;text-align:center;line-height:1.15;min-width:0;}
+.map-name{font-size:12px;color:#5d3b45;letter-spacing:3px;}
+.wave-line{font-size:17px;font-weight:700;color:#fff;text-shadow:0 2px 0 #8a4a58;}
+.wave-sub{font-size:11px;color:#5d3b45;}
+
+/* 顶栏两行：第一行功能，第二行双方阿斗血量 */
+#topbar{display:block;padding:6px 10px 7px;}
+.tb-row{display:flex;align-items:center;gap:8px;}
+.tb-row + .tb-row{margin-top:5px;}
+.hp-row{gap:10px;}
+.hp-group{
+  flex:1 1 0;display:flex;align-items:center;gap:5px;justify-content:center;
+  padding:2px 6px;border-radius:12px;
+  background:rgba(60,35,45,.28);
+  border:1px solid rgba(74,47,60,.5);
+}
+.hp-group.enemy{background:rgba(60,35,45,.42);}
+.hp-label{font-size:10.5px;color:#4a2f3c;font-weight:700;letter-spacing:1px;}
+
+.heart-box{display:flex;gap:2px;flex:0 0 auto;}
+.heart-box .h{
+  font-size:16px;line-height:1;color:#e2564f;
+  text-shadow:0 1px 0 #7a1f1c, 0 0 4px rgba(226,86,79,.6);
+}
+.heart-box .h.off{color:#7c5b62;text-shadow:none;opacity:.6;}
+
+/* --- 棋盘 --- */
+#boardWrap{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+#board{
+  display:block;
+  max-width:100%;max-height:100%;width:auto;height:auto;
+  touch-action:none;                     /* 手指拖动就是拖棋子，不滚动/不缩放 */
+  cursor:pointer;
+}
+.callout{
+  position:absolute;top:38%;left:0;right:0;
+  text-align:center;font-size:30px;font-weight:700;letter-spacing:4px;
+  color:#fff;text-shadow:0 3px 0 #a4453f,0 0 16px rgba(255,220,120,.9);
+  pointer-events:none;
+  animation:pop 1.4s ease-out forwards;
+}
+@keyframes pop{
+  0%{transform:scale(.6);opacity:0;}
+  18%{transform:scale(1.08);opacity:1;}
+  70%{transform:scale(1);opacity:1;}
+  100%{transform:scale(1);opacity:0;}
+}
+.toast-layer{position:absolute;left:0;right:0;bottom:8px;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;}
+.toast{
+  background:rgba(40,22,30,.85);color:#ffe9c9;
+  font-size:13px;padding:6px 14px;border-radius:14px;
+  border:1px solid rgba(255,220,160,.4);
+  animation:toastIn .2s ease-out;
+}
+@keyframes toastIn{from{transform:translateY(8px);opacity:0;}to{transform:none;opacity:1;}}
+
+.hint-bar{
+  position:absolute;left:8px;right:8px;bottom:6px;
+  text-align:center;font-size:11px;color:#5d3b45;
+  background:rgba(255,250,246,.7);border-radius:10px;padding:4px 6px;
+  pointer-events:none;
+}
+
+/* 拖动时跟随指针的虚影 */
+#dragGhost{
+  position:fixed;left:0;top:0;z-index:80;
+  width:52px;height:52px;margin:-26px 0 0 -26px;
+  border-radius:12px;border:3px solid #7d5f69;
+  background:linear-gradient(#fffaf0,#f0e2cf);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:700;color:#241d22;
+  box-shadow:0 6px 14px rgba(0,0,0,.4);
+  pointer-events:none;opacity:.94;
+}
+#dragGhost.general{color:#c8891a;background:linear-gradient(#fff8ec,#f2dfae);border-color:#a5761f;}
+#dragGhost.bad{border-color:#c8443f;background:linear-gradient(#ffeceb,#f4c9c6);}
+
+/* 待放置区（手牌）在拖动时的状态 */
+.bench-slot.dragging{opacity:.45;}
+.bench-slot.dropok{box-shadow:0 0 0 3px #7ed36a, inset 0 2px 4px rgba(90,60,70,.25);}
+
+/* --- 底栏：营地 + 征兵 --- */
+#bottombar{
+  display:flex;align-items:center;gap:8px;flex:0 0 auto;
+  padding:8px 10px 10px;
+  background:linear-gradient(#c294a0,#a97f8a);
+  border-top:3px solid #5b3b47;
+}
+.camp{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;}
+.camp-sign{
+  flex:0 0 auto;width:38px;height:38px;border-radius:9px;
+  background:linear-gradient(#6b3d2a,#47281b);
+  color:#ffd9a1;font-size:20px;font-weight:700;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid #2f1a11;
+  box-shadow:0 3px 0 #2f1a11;cursor:pointer;padding:0;
+}
+.camp-sign:active{transform:translateY(2px);box-shadow:0 1px 0 #2f1a11;}
+.bench{display:flex;gap:5px;flex:1 1 auto;min-width:0;}
+.bench-slot{
+  flex:1 1 0;aspect-ratio:1/1;max-width:52px;
+  border-radius:10px;border:2px solid #6b4a52;
+  background:linear-gradient(#f3e6ea,#e0ccd3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;color:var(--ink);
+  position:relative;cursor:default;
+  box-shadow:inset 0 2px 4px rgba(90,60,70,.25);
+  transition:transform .08s;
+}
+.bench-slot.empty{opacity:.75;}
+.bench-slot.has{cursor:pointer;background:linear-gradient(#fff8ec,#efdfc8);}
+.bench-slot.general{color:var(--gold);text-shadow:0 0 6px rgba(200,137,26,.55);}
+.bench-slot.shovel{color:#6b5a4a;background:linear-gradient(#eee5d8,#dccfbe);font-size:20px;}
+.bench-slot.pair{background:linear-gradient(#fff3d0,#f0cf90);border-color:#a5761f;box-shadow:0 0 0 2px rgba(200,137,26,.5), inset 0 2px 4px rgba(90,60,70,.25);}
+.bench-slot.pair.purple{background:linear-gradient(#f0e6ff,#d3bdf7);border-color:#6b3fbe;box-shadow:0 0 0 2px rgba(123,75,214,.5), inset 0 2px 4px rgba(70,45,105,.25);}
+/* 等级徽章（备战席格子 = 离棋盘无限远的普通格子，一样有等级） */
+.bench-slot .slot-lv{
+  position:absolute;right:-3px;top:-5px;width:19px;height:19px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(60,40,25,.92);color:#fff8e0;font-size:12px;font-style:normal;font-weight:700;
+  border:2px solid #ffe6a8;box-shadow:0 1px 3px rgba(0,0,0,.4);
+}
+.bench-slot .slot-lv.purple{background:rgba(90,50,150,.95);border-color:#d9c2ff;}
+/* 组合体：槽位顶部的武将名小标签 */
+.bench-slot .slot-hero{
+  position:absolute;left:50%;top:-9px;transform:translateX(-50%);
+  padding:0 5px;border-radius:5px;white-space:nowrap;
+  background:rgba(58,38,10,.92);color:#ffe6a8;
+  font-size:9px;font-weight:700;letter-spacing:0;line-height:14px;
+}
+.bench-slot.pair.purple .slot-hero{background:rgba(42,22,72,.92);color:#e8dcff;}
+.bench-slot.sel{transform:translateY(-4px);box-shadow:0 0 0 3px #ffd25e,0 4px 10px rgba(0,0,0,.35);}
+.bench-slot:active{transform:scale(.94);}
+
+.btn-summon{
+  flex:0 0 auto;width:104px;
+  padding:8px 6px;
+  border-radius:16px;border:3px solid #3b2013;
+  background:linear-gradient(#b3855a,#87573a);
+  color:#fff5e2;font-family:inherit;cursor:pointer;
+  box-shadow:0 4px 0 #3b2013;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.btn-summon:active{transform:translateY(3px);box-shadow:0 1px 0 #3b2013;}
+.btn-summon .s-title{font-size:19px;font-weight:700;letter-spacing:5px;}
+.btn-summon .s-cost{display:flex;align-items:center;gap:4px;font-size:15px;font-weight:700;color:#ffe9bd;}
+.btn-summon.off{filter:grayscale(.65) brightness(.85);cursor:not-allowed;}
+
+/* ======================= 遮罩 / 弹窗 ======================= */
+.overlay{
+  position:fixed;inset:0;z-index:50;
+  background:rgba(30,16,22,.72);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.dialog{
+  width:100%;max-width:340px;
+  background:linear-gradient(#fffaf4,#f0dfd2);
+  border:3px solid var(--line);border-radius:20px;
+  padding:20px 18px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+.dialog h2{margin:0 0 8px;font-size:24px;letter-spacing:4px;color:#6b3d4c;}
+.dialog-desc{margin:0 0 16px;font-size:13px;color:#7d5f69;line-height:1.6;}
+.dialog .btn{margin-bottom:10px;}
+.dialog .btn:last-child{margin-bottom:0;}
+.dialog-scroll{max-height:82vh;display:flex;flex-direction:column;}
+.help-body{
+  text-align:left;font-size:12.5px;line-height:1.7;color:#4a2f3c;
+  overflow-y:auto;margin:4px 0 14px;padding-right:4px;
+}
+.help-body p{margin:0 0 8px;}
+.help-body b{color:#8a4a58;}
+
+
+
+
+
+
+/* ==========================================================================
+   手机 / 触控适配
+   - 所有拖动都走 Pointer Events（鼠标 / 触屏 / 触控笔通用）
+   - 画布与备战席 touch-action:none，手指滑动只用来拖棋子，不会滚动或缩放
+   - 触屏上把可点区域放大到 ≥44px，并把拖动判定阈值放宽，避免误触
+   ========================================================================== */
+
+/* 横屏（且高度很矮）时提示竖屏使用，点一下可忽略 */
+#rotateHint{
+  position:fixed;left:0;top:0;right:0;bottom:0;z-index:9000;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(26,14,20,.94);
+}
+#rotateHint.show{display:flex;}
+#rotateHint.gone{display:none !important;}
+#rotateHint .rot-box{text-align:center;color:#f6e6d4;}
+#rotateHint .rot-icon{
+  width:46px;height:74px;margin:0 auto 14px;
+  border:3px solid #f6e6d4;border-radius:9px;
+  animation:rotSpin 1.6s ease-in-out infinite;
+}
+@keyframes rotSpin{0%,40%{transform:rotate(90deg);}70%,100%{transform:rotate(0deg);}}
+#rotateHint .rot-text{font-size:20px;font-weight:700;letter-spacing:3px;}
+#rotateHint .rot-sub{margin-top:8px;font-size:12px;opacity:.7;letter-spacing:1px;}
+@media (orientation:landscape) and (max-height:520px){
+  #rotateHint.show{display:flex;}
+}
+
+/* 触屏设备：可点区域放大到 44px 左右，手指更好点 */
+@media (pointer:coarse){
+  .icon-btn{width:44px;height:44px;}
+  .camp-sign{width:44px;height:44px;}
+  .bench-slot{max-width:56px;}
+  .mu-side{height:38px;}
+  .mu-left{gap:9px;}
+  .bench-slot .slot-lv{width:21px;height:21px;font-size:13px;}
+}
+/* 同一次触摸里，棋子/铲子直接可拖，不要被浏览器当成滚动 */
+#bench,.bench-slot,.camp-sign,#board{touch-action:none;}
+.btn,.mu-side,.mu-start,.mu-sub,.mu-coins,.mu-stamina,.icon-btn,.camp-sign,.btn-summon{touch-action:manipulation;}
+
+/* 窄屏（小手机）：整体缩小一档字号与间距，并优先保证备战席格子够大够好点 */
+@media (max-width:380px){
+  .mu-title{font-size:30px;letter-spacing:3px;}
+  .mu-rank{font-size:19px;}
+  .mu-stars{font-size:19px;}
+  .mu-coins{min-width:104px;height:33px;}
+  .mu-coins b{font-size:15px;}
+  .mu-stamina{height:29px;}
+  .mu-stamina b{font-size:13px;}
+  .mu-side{height:31px;font-size:13px;min-width:66px;}
+  .mu-side.small{font-size:12px;min-width:60px;}
+  .mu-start{font-size:22px;letter-spacing:5px;padding:13px 10px;}
+  .rank-bar{height:8px;}
+  /* 底栏：省掉所有可以省的空隙，留给 5 个备战席格子 */
+  #bottombar{padding:6px 7px 8px;gap:6px;}
+  .camp{gap:5px;}
+  .camp-sign{width:34px;height:34px;font-size:18px;border-radius:8px;}
+  .bench{gap:3px;}
+  .bench-slot{max-width:none;border-radius:8px;font-size:19px;}
+  .bench-slot .slot-lv{width:16px;height:16px;font-size:10px;border-width:1.5px;right:-2px;top:-4px;}
+  .bench-slot .slot-hero{font-size:8px;line-height:12px;padding:0 3px;}
+  .btn-summon{width:74px;padding:7px 3px;border-radius:13px;}
+  .btn-summon .s-title{font-size:15px;letter-spacing:2px;}
+  .hint-bar{font-size:12px;padding:5px 8px;}
+}
+/* 矮屏（小手机横过来或浏览器占位多）：主界面允许滚动，不再被裁掉 */
+@media (max-height:660px){
+  .menu-ui{min-height:560px;}
+  #menuBg{min-height:560px;}
+}
